@@ -1,0 +1,190 @@
+package arnett.apps.ErogeTest;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Typeface;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.*;
+import android.widget.*;
+
+
+
+public class Eroge extends Activity {
+
+    private Toast myToast;
+    private int id_image = 0;
+    int[] imageId = {R.drawable.first_landscape, R.drawable.second_landscape, R.drawable.third_landscape };
+
+    /**
+     * Called when the activity is first created.
+     */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+
+        final ImageView band      = (ImageView)      findViewById(R.id.imageView2)    ;
+        final ImageView imageView = (ImageView)      findViewById(R.id.imageView)     ;
+        final ImageButton b_left  = (ImageButton)    findViewById(R.id.button_left)   ;
+        final ImageButton b_right = (ImageButton)    findViewById(R.id.button_right)  ;
+        final RelativeLayout rv   = (RelativeLayout) findViewById(R.id.relativeLayout);
+
+        Typeface type = Typeface.createFromAsset(getAssets(), "fonts/TypeWriter.ttf");
+        final TypeWriter writer    = new TypeWriter(this);
+        final Handler mHandler     = new Handler();
+        final Button first_choice  = new Button(getApplicationContext());
+        final Button second_choice = new Button(getApplicationContext());
+
+        /**
+         * Display slowly a text
+         */
+
+        String text = "Il était une fois, une phrase super longue, bien chiante, histoire de voir si   ma bande est assez longue et si ça retourne bien à la ligne!";
+        int wait = text.length();
+
+        writer.setX(25);
+        writer.setY(1000);
+        writer.setCharacterDelay(35);
+        writer.animateText(text);
+        writer.setTypeface(type);
+        rv.addView(writer);
+
+        /**
+         * Delayed button appears !
+         */
+        mHandler.postDelayed(new Runnable() {
+            public void run() {
+                first_choice.setLayoutParams(new RelativeLayout.LayoutParams(600,350));
+                first_choice.setX(950);
+                first_choice.setY(50);
+                first_choice.setText("Aller boire un verre avec elle");
+                rv.addView(first_choice);
+
+                second_choice.setLayoutParams(new RelativeLayout.LayoutParams(600,350));
+                second_choice.setX(950);
+                second_choice.setY(450);
+                second_choice.setText("Aller à la piscne avec elle");
+                rv.addView(second_choice);
+            }
+        }, wait*35+1000);
+
+        first_choice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageView.setImageResource(R.drawable.second_landscape);
+            }
+        });
+
+
+        b_left.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                id_image--;
+
+                if( id_image < 0 ){
+                    myToast = Toast.makeText(getApplicationContext(), "No more image here", Toast.LENGTH_LONG);
+                    myToast.setGravity(Gravity.CENTER,0,0);
+                    myToast.show();
+                    id_image++;
+                }
+                else{
+                    rv.removeView(imageView);
+                    rv.removeView(b_left);
+                    rv.removeView(b_right);
+                    rv.removeView(band);
+                    rv.removeView(writer);
+
+                    imageView.setImageResource(imageId[id_image]);
+                    rv.addView(imageView);
+                    rv.addView(b_left);
+                    rv.addView(b_right);
+                    rv.addView(band);
+                    rv.addView(writer);
+                }
+            }
+        });
+
+        b_right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                id_image++;
+
+                if( id_image > imageId.length-1 ){
+                    myToast = Toast.makeText(getApplicationContext(), "No more image here", Toast.LENGTH_LONG);
+                    myToast.setGravity(Gravity.CENTER,0,0);
+                    myToast.show();
+                    id_image--;
+                }
+                else{
+                    rv.removeView(imageView);
+                    rv.removeView(b_left);
+                    rv.removeView(b_right);
+                    rv.removeView(band);
+                    rv.removeView(writer);
+
+                    imageView.setImageResource(imageId[id_image]);
+                    rv.addView(imageView);
+                    rv.addView(b_left);
+                    rv.addView(b_right);
+                    rv.addView(band);
+                    rv.addView(writer);
+                }
+            }
+        });
+    }
+
+
+    /**
+     * needed Method to create Menu
+     * @param menu
+     * @return true to display
+     */
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    /**
+     * selected items on menu
+     * @param item selectedItem
+     * @return apply and true after applying
+     */
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+
+        switch (item.getItemId())
+        {
+            case R.id.menu_bookmark:
+                Toast.makeText(Eroge.this, "Bookmark is Selected", Toast.LENGTH_SHORT).show();
+                return true;
+
+            case R.id.menu_save:
+                Toast.makeText(Eroge.this, "Save is Selected", Toast.LENGTH_SHORT).show();
+                return true;
+
+            case R.id.menu_search:
+                Toast.makeText(Eroge.this, "Search is Selected", Toast.LENGTH_SHORT).show();
+                return true;
+
+            case R.id.menu_share:
+                Toast.makeText(Eroge.this, "Share is Selected", Toast.LENGTH_SHORT).show();
+                return true;
+
+            case R.id.menu_delete:
+                Intent intent = getIntent();
+                finish();
+                startActivity(intent);
+                return true;
+
+            case R.id.menu_preferences:
+                Toast.makeText(Eroge.this, "Preferences is Selected", Toast.LENGTH_SHORT).show();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+}
